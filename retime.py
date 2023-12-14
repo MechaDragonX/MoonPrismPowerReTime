@@ -18,7 +18,7 @@ def read_file(path: str) -> list:
     return lines
 
 
-def import_subtitles(file_text: list) -> list:
+def parse_subtitles(file_text: list) -> list:
     # importing = False
     start_time_pattern = re.compile('.+?(?= --> )')
     end_time_pattern = re.compile('(?<= --> )[^\]]+')
@@ -65,6 +65,11 @@ def import_subtitles(file_text: list) -> list:
     return subtitles
 
 
+def import_subtitles(input_path: str) -> list:
+    lines = read_file(input_path)
+    return parse_subtitles(lines)
+
+
 def write_to_srt(subtitles: list, path: str) -> None:
     content = []
     i = 0
@@ -78,10 +83,21 @@ def write_to_srt(subtitles: list, path: str) -> None:
         file.writelines(content)
 
 
-def recreate(input_path: str, output_path: str):
-    lines = read_file(input_path)
-    subtitles = import_subtitles(lines)
+def recreate(input_path: str, output_path: str) -> None:
+    subtitles = import_subtitles(input_path)
     write_to_srt(subtitles, output_path)
+
+def add_break(subtitles: list, start_index: int, break_interval: str) -> None:
+    try:
+        time.fromisoformat(break_interval)
+    except ValueError:
+        print("Break interval must be a time in ISO format")
+
+
+
+def break_interval(input_path: str, start_index: int, break_interval: str) -> None:
+    lines = read_file(input_)
+    add_break(start_index, break_interval)
 
 
 def add_args():
@@ -92,6 +108,7 @@ def add_args():
     )
 
     parser.add_argument('-r', '--recreate', type=str, nargs=2, metavar=('<input path>', '<output path>'), help='utilize this program to create a given SRT subtitle file')
+    parser.add_argument('-b', '--break_interval', nargs=3, metavar=('<input path>', '<start index>', '<break interval>'), help='add a break of some time interval (must be provided in ISO format) starting at some index of the subtitles')
     
     args = parser.parse_args()
 
@@ -101,3 +118,5 @@ def add_args():
 args = add_args()
 if args.recreate:
     recreate(args.recreate[0], args.recreate[1])
+if args.break_interval:
+    break_interval(args.break_interval[0], args.break_interval[1], args.break_interval[2])
