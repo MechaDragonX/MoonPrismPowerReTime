@@ -11,6 +11,10 @@ class Subtitle:
         self.text = text
 
     def __str__(self):
-        start_string = f'{self.start_time.isoformat()[:-7]},{self.start_time.isoformat()[9:12]}'
-        end_string = f'{self.end_time.isoformat()[:-7]},{self.end_time.isoformat()[9:12]}'
+        start_str_main = self.start_time.isoformat(timespec='microseconds')[:-7]
+        start_str_ms = self.start_time.isoformat(timespec='microseconds')[9:12]
+        end_str_main = self.end_time.isoformat(timespec='microseconds')[:-7]
+        end_str_ms = self.end_time.isoformat(timespec='microseconds')[9:12]
+        start_string = f'{start_str_main},{start_str_ms}'
+        end_string = f'{end_str_main},{end_str_ms}'
         return f'{start_string} --> {end_string}\n{self.text}'
