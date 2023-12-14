@@ -91,7 +91,7 @@ def add_args():
         usage='MoonPrismPowerReTime [option] parameters'
     )
 
-    parser.add_argument('-r', '--recreate', type=str, nargs=2, metavar=('<input path>', '<output path>'), help='Utilize this program to create a given SRT subtitle file')
+    parser.add_argument('-r', '--recreate', type=str, nargs=2, metavar=('<input path>', '<output path>'), help='utilize this program to create a given SRT subtitle file')
     
     args = parser.parse_args()
 
