@@ -1,5 +1,5 @@
 import argparse
-from datetime import time
+from datetime import date, datetime, time, timedelta
 import re
 from subtitle import Subtitle
 
@@ -88,6 +88,30 @@ def recreate(input_path: str, output_path: str) -> None:
     write_to_srt(subtitles, output_path)
 
 
+def add_break(subtitles: list, start_index: int, break_interval: str) -> list:
+    try:
+        time.fromisoformat(break_interval)
+    except ValueError:
+        print("Break interval must be a time in ISO format")
+
+    minutes = int(break_interval[1])
+    seconds = int(break_interval[3:5])
+    i = int(start_index) - 1
+    while i < len(subtitles):
+        subtitles[i].start_time = (datetime.combine(date.today(), subtitles[i].start_time) + timedelta(minutes=minutes, seconds=seconds)).time()
+        subtitles[i].end_time = (datetime.combine(date.today(), subtitles[i].end_time) + timedelta(minutes=minutes, seconds=seconds)).time()
+        i += 1
+
+    return subtitles
+
+
+def break_interval(input_path: str, output_path: str, start_index: int, break_interval: str):
+    subtitles = import_subtitles(input_path)
+    subtitles = add_break(subtitles, start_index, break_interval)
+    write_to_srt(subtitles, output_path)
+
+# break_interval('test.srt', 'out_b.srt', '5', '01:32')
+
 def add_args():
     parser = argparse.ArgumentParser(
         prog='Moon Prism Power Re Time',
@@ -96,6 +120,7 @@ def add_args():
     )
 
     parser.add_argument('-r', '--recreate', type=str, nargs=2, metavar=('<input path>', '<output path>'), help='utilize this program to create a given SRT subtitle file')
+    parser.add_argument('-b', '--break_interval', nargs=4, metavar=('<input path>', '<output path>','<start index>', '<break interval>'), help='add a break of some time interval (must be provided in ISO format) starting at some index of the subtitles starting at 1')
 
     args = parser.parse_args()
 
@@ -105,3 +130,5 @@ def add_args():
 args = add_args()
 if args.recreate:
     recreate(args.recreate[0], args.recreate[1])
+elif args.break_interval:
+    break_interval(args.break_interval[0], args.break_interval[1], args.break_interval[2], args.break_interval[3])
