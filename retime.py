@@ -77,6 +77,10 @@ def write_to_srt(subtitles: list, path: str) -> None:
         file.writelines(content)
 
 
-lines = read_file('test.srt')
-subtitles = import_subtitles(lines)
-write_to_srt(subtitles, 'out.srt')
+def recreate(input_path: str, output_path: str):
+    lines = read_file(input_path)
+    subtitles = import_subtitles(lines)
+    write_to_srt(subtitles, output_path)
+
+
+recreate('test.srt', 'out.srt')
