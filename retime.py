@@ -2,51 +2,81 @@ from datetime import time
 import re
 from subtitle import Subtitle
 
-test = [
-    '1',
-    '00:00:02,430 --> 00:00:05,420',
-    'エリマキトカゲや',
-    'ウーパールーパーや',
-    ''
-]
+def read_file(path: str) -> list:
+    lines = []
+    with open(path, 'r') as file:
+        lines = file.readlines()
+    
+    lines[0] = '1'
 
-# importing = False
-start_time_pattern = re.compile('.+?(?= --> )')
-end_time_pattern = re.compile('(?<= --> )[^\]]+')
-start_time = time(0, 0, 0)
-end_time = time(0, 0, 0)
-text_array = []
-text = ''
-current = None
+    i = 1
+    while i < len(lines):
+        lines[i] = lines[i][:-1]
+        i += 1
+    
+    return lines
 
-for line in test:
-    if line.isdigit():
-        # importing = True
-        start_time = time(0, 0, 0)
-        end_time = time(0, 0 , 0)
-        text_array.clear()
-        text = ''
 
-    elif line == '':
-        i = 0
-        while i < len(text_array):
-            if i == len(text_array) - 1:
-                text += text_array[i]
-            else:
-                text += f'{text_array[i]}\n'
-            i += 1
-        current = Subtitle(start_time, end_time, text)
-        # importing = False
+def import_subtitles(file_text: list) -> list:
+    # importing = False
+    start_time_pattern = re.compile('.+?(?= --> )')
+    end_time_pattern = re.compile('(?<= --> )[^\]]+')
+    start_time = time(0, 0, 0)
+    end_time = time(0, 0, 0)
+    text_array = []
+    text = ''
+    i = 0
+    current = None
+    subtitles = []
 
-    elif (len(line) == 29) and (' --> ' in line):
-        start_time = time.fromisoformat(
-            re.search(start_time_pattern, line).group()
-        )
-        end_time = time.fromisoformat(
-            re.search(end_time_pattern, line).group()
-        )
+    for line in file_text:
+        if line.isdigit():
+            # importing = True
+            start_time = time(0, 0, 0)
+            end_time = time(0, 0 , 0)
+            text_array.clear()
+            text = ''
+            current = None
 
-    else:
-        text_array.append(line)
+        elif line == '':
+            i = 0
+            while i < len(text_array):
+                if i == len(text_array) - 1:
+                    text += text_array[i]
+                else:
+                    text += f'{text_array[i]}\n'
+                i += 1
+            current = Subtitle(start_time, end_time, text)
+            subtitles.append(current)
+            # importing = False
 
-print(current)
+        elif (len(line) == 29) and (' --> ' in line):
+            start_time = time.fromisoformat(
+                re.search(start_time_pattern, line).group()
+            )
+            end_time = time.fromisoformat(
+                re.search(end_time_pattern, line).group()
+            )
+
+        else:
+            text_array.append(line)
+    
+    return subtitles
+
+
+def write_to_srt(subtitles: list, path: str) -> None:
+    content = []
+    i = 0
+    while i < len(subtitles):
+        content.append(f'{str(i + 1)}\n')
+        content.append(f'{str(subtitles[i])}\n')
+        content.append('\n')
+        i += 1
+
+    with open(path, 'w') as file:
+        file.writelines(content)
+
+
+lines = read_file('test.srt')
+subtitles = import_subtitles(lines)
+write_to_srt(subtitles, 'out.srt')
