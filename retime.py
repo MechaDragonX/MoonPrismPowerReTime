@@ -1,3 +1,4 @@
+import argparse
 from datetime import time
 import re
 from subtitle import Subtitle
@@ -83,4 +84,20 @@ def recreate(input_path: str, output_path: str):
     write_to_srt(subtitles, output_path)
 
 
-recreate('test.srt', 'out.srt')
+def add_args():
+    parser = argparse.ArgumentParser(
+        prog='Moon Prism Power Re Time',
+        description='Recreate subtitle files and retime certain subtitle for Sailor Moon anime s eries',
+        usage='MoonPrismPowerReTime [option] parameters'
+    )
+
+    parser.add_argument('-r', '--recreate', type=str, nargs=2, metavar=('<input path>', '<output path>'), help='Utilize this program to create a given SRT subtitle file')
+    
+    args = parser.parse_args()
+
+    return args
+
+
+args = add_args()
+if args.recreate:
+    recreate(args.recreate[0], args.recreate[1])
