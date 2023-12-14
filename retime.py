@@ -115,7 +115,7 @@ def break_interval(input_path: str, output_path: str, start_index: int, break_in
 def add_args():
     parser = argparse.ArgumentParser(
         prog='Moon Prism Power Re Time',
-        description='Recreate subtitle files and retime certain subtitle for Sailor Moon anime series',
+        description='Recreate SRT subtitles files and retime certain subtitles for the Sailor Moon anime series',
         usage='MoonPrismPowerReTime [option] parameters'
     )
 
