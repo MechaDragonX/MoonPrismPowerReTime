@@ -87,7 +87,7 @@ def recreate(input_path: str, output_path: str):
 def add_args():
     parser = argparse.ArgumentParser(
         prog='Moon Prism Power Re Time',
-        description='Recreate subtitle files and retime certain subtitle for Sailor Moon anime s eries',
+        description='Recreate subtitle files and retime certain subtitle for Sailor Moon anime series',
         usage='MoonPrismPowerReTime [option] parameters'
     )
 
